@@ -18,7 +18,10 @@
         </div>
         <div class="w-1/4 text-right">
           <nuxt-link
-            to="/dashboard/projects/create"
+            :to="{
+              name: 'dashboard-projects-id-edit',
+              params: { id: campaign.data.id },
+            }"
             class="bg-green-button hover:bg-green-button text-white font-bold px-4 py-1 rounded inline-flex items-center"
           >
             Edit
@@ -28,84 +31,72 @@
       <div class="block mb-2">
         <div class="w-full lg:max-w-full lg:flex mb-4">
           <div
-            class="border border-gray-400 bg-white rounded p-8 flex flex-col justify-between leading-normal"
+            class="w-full border border-gray-400 bg-white rounded p-8 flex flex-col justify-between leading-normal"
           >
             <div>
               <div class="text-gray-900 font-bold text-xl mb-2">
-                Cari Uang Buat Gunpla
+                {{ campaign.data.name }}
               </div>
               <p class="text-sm font-bold flex items-center mb-1">
+                Short Description
+              </p>
+              <p class="text-gray-700 text-base">
+                {{ campaign.data.short_description }}
+              </p>
+              <p class="text-sm font-bold flex items-center mb-1 mt-3">
                 Description
               </p>
               <p class="text-gray-700 text-base">
-                Designed to fit your dedicated typing experience. No matter what
-                you like, linear, clicky or a little in between, we’ve got you
-                covered with three Gateron switches options (Blue, Brown, Red).
-                With a lifespan of 50 million keystroke lifespan we want to make
-                sure that you experience same feedback for every keystroke.
-              </p>
-              <p class="text-gray-700 text-base">
-                With N-key rollover (NKRO on wired mode only) you can register
-                as many keys as you can press at once without missing out
-                characters. It allows to use all the same media keys as
-                conventional macOS.
+                {{ campaign.data.description }}
               </p>
               <p class="text-sm font-bold flex items-center mb-1 mt-4">
                 What Will Funders Get
               </p>
               <ul class="list-disc ml-5">
-                <li>Equity of the startup directly from the founder</li>
-                <li>Special service or product that startup has</li>
-                <li>
-                  You can also sell your equity once the startup going IPO
+                <li v-for="perk in campaign.data.perks" :key="perk.index">
+                  {{ perk }}
                 </li>
               </ul>
               <p class="text-sm font-bold flex items-center mb-1 mt-4">Price</p>
-              <p class="text-4xl text-gray-700 text-base">200.000</p>
+              <p class="text-4xl text-gray-700 text-base">
+                Rp
+                {{ new Intl.NumberFormat().format(campaign.data.goal_amount) }}
+              </p>
             </div>
           </div>
         </div>
       </div>
       <div class="flex justify-between items-center">
-        <div class="w-3/4 mr-6">
+        <div class="w-2/4 mr-6">
           <h3 class="text-2xl text-gray-900 mb-4 mt-5">Gallery</h3>
         </div>
-        <div class="w-1/4 text-right">
-          <nuxt-link
-            to="#"
-            class="bg-green-button hover:bg-green-button text-white font-bold px-4 py-1 rounded inline-flex items-center"
+        <div class="w-2/4 text-right">
+          <input
+            type="file"
+            ref="file"
+            @change="selectFile"
+            class="border p-1 rounded overflow-hidden"
+          />
+          <button
+            @click="upload"
+            class="bg-green-button hover:bg-green-button text-white font-bold px-4 py-2 rounded inline-flex items-center"
           >
             Upload
-          </nuxt-link>
+          </button>
         </div>
       </div>
-      <div class="flex -mx-2">
+      <div class="grid grid-cols-4 gap-4 -mx-2">
         <div
-          class="relative w-1/4 bg-white m-2 p-2 border border-gray-400 rounded"
+          v-for="image in campaign.data.images"
+          :key="image.image_url.index"
+          class="relative w-full bg-white m-2 p-2 border border-gray-400 rounded"
         >
           <figure class="item-thumbnail">
-            <img src="/project-slider-1.jpg" alt="" class="rounded w-full" />
-          </figure>
-        </div>
-        <div
-          class="relative w-1/4 bg-white m-2 p-2 border border-gray-400 rounded"
-        >
-          <figure class="item-thumbnail">
-            <img src="/project-slider-2.jpg" alt="" class="rounded w-full" />
-          </figure>
-        </div>
-        <div
-          class="relative w-1/4 bg-white m-2 p-2 border border-gray-400 rounded"
-        >
-          <figure class="item-thumbnail">
-            <img src="/project-slider-3.jpg" alt="" class="rounded w-full" />
-          </figure>
-        </div>
-        <div
-          class="relative w-1/4 bg-white m-2 p-2 border border-gray-400 rounded"
-        >
-          <figure class="item-thumbnail">
-            <img src="/project-slider-4.jpg" alt="" class="rounded w-full" />
+            <img
+              :src="`${$axios.defaults.baseURL}/${image.image_url}`"
+              alt=""
+              class="rounded w-full"
+            />
           </figure>
         </div>
       </div>
@@ -115,16 +106,22 @@
         </div>
       </div>
       <div class="block mb-2">
-        <div class="w-full lg:max-w-full lg:flex mb-4">
+        <div
+          class="w-full lg:max-w-full lg:flex mb-4"
+          v-for="transaction in transactions.data"
+          :key="transaction.id"
+        >
           <div
             class="w-full border border-gray-400 lg:border-gray-400 bg-white rounded p-8 flex flex-col justify-between leading-normal"
           >
             <div>
               <div class="text-gray-900 font-bold text-xl mb-1">
-                Galih Pratama
+                {{ transaction.name }}
               </div>
               <p class="text-sm text-gray-600 flex items-center mb-2">
-                Rp. 200.000 &middot; 12 September 2020
+                Rp
+                {{ new Intl.NumberFormat().format(transaction.amount) }}
+                &middot; {{ transaction.created_at }}
               </p>
             </div>
           </div>
@@ -138,3 +135,63 @@
     <Footer />
   </div>
 </template>
+
+<script>
+export default {
+  middleware: 'auth',
+  async asyncData({ $axios, params }) {
+    try {
+      const campaign = await $axios.$get(`/api/v1/campaigns/${params.id}`)
+      const transactions = await $axios.$get(
+        `/api/v1/campaigns/${params.id}/transactions`
+      )
+      return { campaign, transactions }
+    } catch (error) {
+      console.log(error.response)
+    }
+  },
+
+  data() {
+    return {
+      selectedFiles: undefined,
+    }
+  },
+
+  methods: {
+    selectFile() {
+      this.selectedFiles = this.$refs.file.files
+    },
+
+    async load() {
+      const campaign = await this.$axios.$get(
+        `/api/v1/campaigns/${this.$route.params.id}`
+      )
+
+      this.campaign = campaign
+    },
+    async upload(file) {
+      const formData = new FormData()
+      formData.append('campaign_id', this.$route.params.id)
+      formData.append('file', this.selectedFiles.item(0))
+      formData.append('is_primary', true)
+
+      try {
+        const response = await this.$axios.post(
+          '/api/v1/campaign-images',
+          formData,
+          {
+            header: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        )
+        this.load()
+        this.selectedFiles = undefined
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+  },
+}
+</script>
