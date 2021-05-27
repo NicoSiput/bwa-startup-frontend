@@ -145,6 +145,17 @@
 
 <script>
 export default {
+  head() {
+    return {
+      title: `Backer - ${this.campaign.data.name}`,
+      script: [
+        {
+          src: 'https://app.sandbox.midtrans.com/snap/snap.js',
+          'data-client-key': 'SB-Mid-client-AdfYk30_jlsuwWEX',
+        },
+      ],
+    }
+  },
   async asyncData({ $axios, params }) {
     const campaign = await $axios.$get(`/api/v1/campaigns/${params.id}`)
     return { campaign }
@@ -163,6 +174,7 @@ export default {
     changeImage(url) {
       this.default_image = url
     },
+
     async fund() {
       try {
         const response = await this.$axios.post(
@@ -170,8 +182,8 @@ export default {
           this.transactions
         )
 
-        window.location = response.data.data.payment_url
-        console.log(response)
+        const snapToken = response.data.data.token
+        snap.pay(snapToken) // Replace it with your transaction token
       } catch (error) {
         console.log(response)
       }

@@ -1,9 +1,11 @@
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
-  ssr: false,
+  // DEFAULT : true
+  ssr: true,
 
   // Target (https://go.nuxtjs.dev/config-target)
-  target: 'static',
+  // target: 'static' // for static,
+  target: 'server', // for server side rendering,
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -51,7 +53,8 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: 'http://localhost:8080',
+    // baseURL: 'http://localhost:8080',
+    baseURL: 'https://backer-backend.herokuapp.com',
   },
 
   auth: {
@@ -80,4 +83,8 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+
+  generate: {
+    fallback: true,
+  },
 }
