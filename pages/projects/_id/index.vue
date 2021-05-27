@@ -157,8 +157,12 @@ export default {
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'title', content: this.campaign.data.name },
-        { name: 'description', content: this.campaign.data.short_description },
+        { hid: 'title', name: 'title', content: this.campaign.data.name },
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.campaign.data.short_description,
+        },
         { hid: 'og:title', name: 'og:title', content: this.campaign.data.name },
         {
           hid: 'og:description',
